@@ -1,5 +1,6 @@
 package pl.kurs.task1.models;
 
+import pl.kurs.task1.exceptions.ElementNotFoundException;
 import pl.kurs.task1.exceptions.InvalidStringContainerPatternException;
 import pl.kurs.task1.exceptions.InvalidStringContainerValueException;
 import java.time.LocalDateTime;
@@ -45,4 +46,58 @@ public class StringContainer {
         }
         size++;
     }
+
+    public String get(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index is out of range.");
+        }
+        Node current = head;
+        for (int i = 0; i < index; i++) {
+            current = current.next;
+        }
+        return current.value;
+    }
+
+    public int size() {
+        return size;
+    }
+
+    public void remove(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index is out of range.");
+        }
+        if (index == 0) {
+            head = head.next;
+        } else {
+            Node current = head;
+            for (int i = 0; i < index - 1; i++) {
+                current = current.next;
+            }
+            current.next = current.next.next;
+        }
+        size--;
+    }
+
+    public void remove(String value) {
+        if (head == null) {
+            throw new ElementNotFoundException(value);
+        }
+        if (head.value.equals(value)) {
+            head = head.next;
+            size--;
+            return;
+        }
+        Node current = head;
+        while (current.next != null) {
+            if (current.next.value.equals(value)) {
+                current.next = current.next.next;
+                size--;
+                return;
+            }
+            current = current.next;
+        }
+        throw new ElementNotFoundException(value);
+    }
+
+
 }
