@@ -2,6 +2,8 @@ package pl.kurs.task2.models;
 
 import pl.kurs.task2.exceptions.ConditionNotMetException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 
 public class ObjectContainer<T> {
@@ -40,8 +42,17 @@ public class ObjectContainer<T> {
         return true;
     }
 
-
-
+    public List<T> getWithFilter(Predicate<T> filter) {
+        List<T> result = new ArrayList<>();
+        Node<T> current = head;
+        while (current != null) {
+            if (filter.test(current.value)) {
+                result.add(current.value);
+            }
+            current = current.next;
+        }
+        return result;
+    }
 
 
 }
