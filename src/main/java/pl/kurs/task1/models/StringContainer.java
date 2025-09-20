@@ -1,5 +1,6 @@
 package pl.kurs.task1.models;
 
+import pl.kurs.task1.exceptions.DuplicatedElementOnListException;
 import pl.kurs.task1.exceptions.ElementNotFoundException;
 import pl.kurs.task1.exceptions.InvalidStringContainerPatternException;
 import pl.kurs.task1.exceptions.InvalidStringContainerValueException;
@@ -11,22 +12,29 @@ public class StringContainer {
     private final Pattern pattern;
     private Node head;
     private int size = 0;
-    private LocalDateTime dateTime;
+    private boolean duplicatedNotAllowed;
 
     public StringContainer(String regex) {
+        this(regex, false);
+    }
+
+    public StringContainer(String regex, boolean duplicatedNotAllowed) {
         try {
             this.pattern = Pattern.compile(regex);
         } catch (Exception e) {
             throw new InvalidStringContainerPatternException(regex);
         }
+        this.duplicatedNotAllowed = duplicatedNotAllowed;
     }
 
     private static class Node {
         String value;
+        LocalDateTime addedAt;
         Node next;
 
         Node(String value) {
             this.value = value;
+            this.addedAt = LocalDateTime.now();
         }
     }
 
@@ -34,6 +42,10 @@ public class StringContainer {
         if (!pattern.matcher(value).matches()) {
             throw new InvalidStringContainerValueException(value);
         }
+        if (duplicatedNotAllowed && contains(value)) {
+            throw new DuplicatedElementOnListException(value);
+        }
+
         Node newNode = new Node(value);
         if (head == null) {
             head = newNode;
@@ -45,6 +57,17 @@ public class StringContainer {
             current.next = newNode;
         }
         size++;
+    }
+
+    private boolean contains(String value) {
+        Node current = head;
+        while (current != null) {
+            if (current.value.equals(value)) {
+                return true;
+            }
+            current = current.next;
+        }
+        return false;
     }
 
     public String get(int index) {

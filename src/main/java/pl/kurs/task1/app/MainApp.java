@@ -6,7 +6,7 @@ public class MainApp {
 
     public static void main(String[] args) {
 
-        StringContainer st = new StringContainer("\\d{2}[-]\\d{3}");
+        StringContainer st = new StringContainer("\\d{2}[-]\\d{3}", true);
 
         st.add("02-495");
         st.add("01-120");
@@ -25,6 +25,15 @@ public class MainApp {
         for(int i = 0; i < st.size(); i++){
             System.out.println(st.get(i));
         }
+
+        st.add("02-495");
+        //st.add("02-495");
+
+
+
+
+
+
 
 
 
