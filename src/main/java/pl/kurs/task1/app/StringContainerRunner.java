@@ -4,7 +4,7 @@ import pl.kurs.task1.models.StringContainer;
 
 import java.time.LocalDateTime;
 
-public class MainApp {
+public class StringContainerRunner {
 
     public static void main(String[] args) {
 
