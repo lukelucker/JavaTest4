@@ -4,6 +4,8 @@ import pl.kurs.task1.exceptions.DuplicatedElementOnListException;
 import pl.kurs.task1.exceptions.ElementNotFoundException;
 import pl.kurs.task1.exceptions.InvalidStringContainerPatternException;
 import pl.kurs.task1.exceptions.InvalidStringContainerValueException;
+
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
@@ -25,6 +27,20 @@ public class StringContainer {
             throw new InvalidStringContainerPatternException(regex);
         }
         this.duplicatedNotAllowed = duplicatedNotAllowed;
+    }
+
+    public StringContainer getDataBetween(LocalDateTime from, LocalDateTime to) {
+        StringContainer result = new StringContainer(pattern.pattern(), duplicatedNotAllowed);
+        Node current = head;
+        while (current != null) {
+            boolean afterFrom = (from == null || !current.addedAt.isBefore(from));
+            boolean beforeTo = (to == null || !current.addedAt.isAfter(to));
+            if (afterFrom && beforeTo) {
+                result.add(current.value);
+            }
+            current = current.next;
+        }
+        return result;
     }
 
     private static class Node {
@@ -122,5 +138,69 @@ public class StringContainer {
         throw new ElementNotFoundException(value);
     }
 
+    public void storeToFile(String fileName) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {
+            bw.write("PATTERN=" + pattern.pattern());
+            bw.newLine();
+            bw.write("DUPLICATES=" + duplicatedNotAllowed);
+            bw.newLine();
 
+            Node current = head;
+            while (current != null) {
+                bw.write(current.value + "|" + current.addedAt);
+                bw.newLine();
+                current = current.next;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static StringContainer fromFile(String fileName) {
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String patternLine = br.readLine();
+            String duplicatesLine = br.readLine();
+            if (patternLine == null || duplicatesLine == null) {
+                throw new RuntimeException("The file has incorrect format.");
+            }
+            String regex = patternLine.replace("PATTERN=", "");
+            boolean duplicatedNotAllowed = Boolean.parseBoolean(duplicatesLine.replace("DUPLICATES=", ""));
+            StringContainer result = new StringContainer(regex, duplicatedNotAllowed);
+
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split("\\|");
+                if (parts.length == 2) {
+                    String value = parts[0];
+                    LocalDateTime addedAt = LocalDateTime.parse(parts[1]);
+                    result.addWithDate(value, addedAt);
+                }
+            }
+            return result;
+        } catch (IOException e) {
+            throw new RuntimeException("File reading error.");
+        }
+    }
+
+    private void addWithDate(String value, LocalDateTime addedAt) {
+        if (!pattern.matcher(value).matches()) {
+            throw new InvalidStringContainerValueException(value);
+        }
+        if (duplicatedNotAllowed && contains(value)) {
+            throw new DuplicatedElementOnListException(value);
+        }
+
+        Node newNode = new Node(value);
+        newNode.addedAt = addedAt;
+        if (head == null) {
+            head = newNode;
+        } else {
+            Node current = head;
+            while (current.next != null) {
+                current = current.next;
+            }
+            current.next = newNode;
+        }
+        size++;
+    }
 }
