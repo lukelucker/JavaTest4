@@ -54,5 +54,9 @@ public class ObjectContainer<T> {
         return result;
     }
 
+    public void removeIf(Predicate filter) {
+
+    }
+
 
 }
