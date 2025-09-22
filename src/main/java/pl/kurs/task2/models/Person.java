@@ -1,8 +1,9 @@
 package pl.kurs.task2.models;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Person {
+public class Person implements Serializable {
 
     private String name;
     private String city;
