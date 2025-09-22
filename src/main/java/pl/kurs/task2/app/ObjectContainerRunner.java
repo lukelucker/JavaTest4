@@ -24,5 +24,11 @@ public class ObjectContainerRunner {
         peopleFromWarsaw.removeIf(p -> p.getAge() > 50);
         peopleFromWarsaw.printAll();
 
+        peopleFromWarsaw.storeToFile("youngPeopleFromWarsaw.txt", p -> p.getAge() < 30, p -> p.getName()+";"+p.getAge()+";"+p.getCity());
+
+        peopleFromWarsaw.storeToFile("warsawPeople.txt");
+
+        ObjectContainer<Person> peopleFromWarsawFromFile = ObjectContainer.fromFile("warsawPeople.txt");
+        peopleFromWarsawFromFile.printAll();
     }
 }
