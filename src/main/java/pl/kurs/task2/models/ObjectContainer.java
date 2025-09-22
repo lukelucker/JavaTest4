@@ -54,8 +54,27 @@ public class ObjectContainer<T> {
         return result;
     }
 
-    public void removeIf(Predicate filter) {
+    public void removeIf(Predicate<T> condition) {
+        while (head != null && condition.test(head.value)) {
+            head = head.next;
+        }
 
+        Node<T> current = head;
+        while (current != null && current.next != null) {
+            if (condition.test(current.next.value)) {
+                current.next = current.next.next;
+            } else {
+                current = current.next;
+            }
+        }
+    }
+
+    public void printAll() {
+        Node<T> current = head;
+        while (current != null) {
+            System.out.println(current.value);
+            current = current.next;
+        }
     }
 
 

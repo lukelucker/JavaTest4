@@ -13,11 +13,16 @@ public class ObjectContainerRunner {
 
         peopleFromWarsaw.add(new Person("Jan", "Warsaw", 30));
         peopleFromWarsaw.add(new Person("Weronika","Warsaw", 20));
+        peopleFromWarsaw.add(new Person("Monika","Warsaw", 53));
         //peopleFromWarsaw.add(new Person("Waldek", "Monaco", 34));
 
         List<Person> females = peopleFromWarsaw.getWithFilter(p -> p.getName().endsWith("a"));
         females.forEach(System.out::println);
 
+        System.out.println("----------------");
+
+        peopleFromWarsaw.removeIf(p -> p.getAge() > 50);
+        peopleFromWarsaw.printAll();
 
     }
 }
