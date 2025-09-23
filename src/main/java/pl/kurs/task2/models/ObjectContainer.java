@@ -83,14 +83,6 @@ public class ObjectContainer<T extends Serializable> implements Serializable {
         }
     }
 
-    public void printAll() {
-        Node<T> current = head;
-        while (current != null) {
-            System.out.println(current.value);
-            current = current.next;
-        }
-    }
-
     public void storeToFile(String filename, Predicate<T> filter, Function<T, String> formatter) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
             Node<T> current = head;
@@ -121,5 +113,17 @@ public class ObjectContainer<T extends Serializable> implements Serializable {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        Node<T> current = head;
+        while (current != null) {
+            sb.append(current.value)
+                    .append("\n");
+            current = current.next;
+        }
+        return sb.toString();
     }
 }

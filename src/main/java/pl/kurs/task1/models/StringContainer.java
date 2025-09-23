@@ -29,20 +29,6 @@ public class StringContainer {
         this.duplicatedNotAllowed = duplicatedNotAllowed;
     }
 
-    public StringContainer getDataBetween(LocalDateTime dateFrom, LocalDateTime dateTo) {
-        StringContainer result = new StringContainer(pattern.pattern(), duplicatedNotAllowed);
-        Node current = head;
-        while (current != null) {
-            boolean afterFrom = (dateFrom == null || !current.addedAt.isBefore(dateFrom));
-            boolean beforeTo = (dateTo == null || !current.addedAt.isAfter(dateTo));
-            if (afterFrom && beforeTo) {
-                result.add(current.value);
-            }
-            current = current.next;
-        }
-        return result;
-    }
-
     private static class Node {
         String value;
         LocalDateTime addedAt;
@@ -55,50 +41,8 @@ public class StringContainer {
     }
 
     public void add(String value) {
-        if (!pattern.matcher(value).matches()) {
-            throw new InvalidStringContainerValueException(value);
-        }
-        if (duplicatedNotAllowed && contains(value)) {
-            throw new DuplicatedElementOnListException(value);
-        }
-
-        Node newNode = new Node(value);
-        if (head == null) {
-            head = newNode;
-        } else {
-            Node current = head;
-            while (current.next != null) {
-                current = current.next;
-            }
-            current.next = newNode;
-        }
-        size++;
-    }
-
-    private boolean contains(String value) {
-        Node current = head;
-        while (current != null) {
-            if (current.value.equals(value)) {
-                return true;
-            }
-            current = current.next;
-        }
-        return false;
-    }
-
-    public String get(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException("Index is out of range.");
-        }
-        Node current = head;
-        for (int i = 0; i < index; i++) {
-            current = current.next;
-        }
-        return current.value;
-    }
-
-    public int size() {
-        return size;
+        validateValue(value);
+        addNode(new Node(value));
     }
 
     public void remove(int index) {
@@ -136,6 +80,28 @@ public class StringContainer {
             current = current.next;
         }
         throw new ElementNotFoundException(value);
+    }
+
+    public StringContainer getDataBetween(LocalDateTime dateFrom, LocalDateTime dateTo) {
+        StringContainer result = new StringContainer(pattern.pattern(), duplicatedNotAllowed);
+        Node current = head;
+        while (current != null) {
+            boolean afterFrom = (dateFrom == null || !current.addedAt.isBefore(dateFrom));
+            boolean beforeTo = (dateTo == null || !current.addedAt.isAfter(dateTo));
+            if (afterFrom && beforeTo) {
+                result.add(current.value);
+            }
+            current = current.next;
+        }
+        return result;
+    }
+
+    public static void waitSeconds(int seconds) {
+        try {
+            Thread.sleep(seconds * 1000L);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     public void storeToFile(String fileName) {
@@ -182,16 +148,37 @@ public class StringContainer {
         }
     }
 
-    private void addWithDate(String value, LocalDateTime addedAt) {
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("StringContainer{\n");
+        sb.append("pattern=").append(pattern.pattern()).append(",\n");
+        sb.append("duplicatedNotAllowed=").append(duplicatedNotAllowed).append(",\n");
+        sb.append("size=").append(size).append("\n");
+        sb.append("elements:\n");
+
+        Node current = head;
+        while (current != null) {
+            sb.append(current.value)
+                    .append(" (").append(current.addedAt).append(")")
+                    .append("\n");
+            current = current.next;
+        }
+
+        sb.append("}");
+        return sb.toString();
+    }
+
+    private void validateValue(String value) {
         if (!pattern.matcher(value).matches()) {
             throw new InvalidStringContainerValueException(value);
         }
         if (duplicatedNotAllowed && contains(value)) {
             throw new DuplicatedElementOnListException(value);
         }
+    }
 
-        Node newNode = new Node(value);
-        newNode.addedAt = addedAt;
+    private void addNode(Node newNode) {
         if (head == null) {
             head = newNode;
         } else {
@@ -202,5 +189,38 @@ public class StringContainer {
             current.next = newNode;
         }
         size++;
+    }
+
+    private boolean contains(String value) {
+        Node current = head;
+        while (current != null) {
+            if (current.value.equals(value)) {
+                return true;
+            }
+            current = current.next;
+        }
+        return false;
+    }
+
+    public String get(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index is out of range.");
+        }
+        Node current = head;
+        for (int i = 0; i < index; i++) {
+            current = current.next;
+        }
+        return current.value;
+    }
+
+    public int size() {
+        return size;
+    }
+
+    private void addWithDate(String value, LocalDateTime addedAt) {
+        validateValue(value);
+        Node newNode = new Node(value);
+        newNode.addedAt = addedAt;
+        addNode(newNode);
     }
 }
