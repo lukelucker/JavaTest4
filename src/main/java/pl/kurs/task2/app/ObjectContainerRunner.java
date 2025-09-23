@@ -22,13 +22,15 @@ public class ObjectContainerRunner {
         System.out.println("----------------");
 
         peopleFromWarsaw.removeIf(p -> p.getAge() > 50);
-        peopleFromWarsaw.printAll();
+        System.out.println(peopleFromWarsaw);
+
+        System.out.println("-----------------");
 
         peopleFromWarsaw.storeToFile("youngPeopleFromWarsaw.txt", p -> p.getAge() < 30, p -> p.getName()+";"+p.getAge()+";"+p.getCity());
 
         peopleFromWarsaw.storeToFile("warsawPeople.txt");
 
         ObjectContainer<Person> peopleFromWarsawFromFile = ObjectContainer.fromFile("warsawPeople.txt");
-        peopleFromWarsawFromFile.printAll();
+        System.out.println(peopleFromWarsawFromFile);
     }
 }

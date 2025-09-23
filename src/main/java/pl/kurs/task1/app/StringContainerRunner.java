@@ -13,15 +13,15 @@ public class StringContainerRunner {
         LocalDateTime start = LocalDateTime.now();
         st.add("02-495");
         st.add("01-120");
+        StringContainer.waitSeconds(1);
         st.add("05-123");
         st.add("00-000");
         //st.add("ala ma kota");
 
-
-
         for(int i = 0; i < st.size(); i++) {
             System.out.println(st.get(i));
         }
+
 
         System.out.println("---------------");
 
@@ -34,6 +34,7 @@ public class StringContainerRunner {
         }
 
         st.add("02-495");
+        StringContainer.waitSeconds(1);
         //st.add("02-495");
         LocalDateTime end = LocalDateTime.now();
 
@@ -47,16 +48,6 @@ public class StringContainerRunner {
 
         st.storeToFile("postalCodes.txt");
         StringContainer fromFile = StringContainer.fromFile("postalCodes.txt");
-        for (int i = 0; i < fromFile.size(); i++) {
-            System.out.println(fromFile.get(i));
-        }
-
-
-
-
-
-
-
-
+        System.out.println(fromFile);
     }
 }
