@@ -18,6 +18,7 @@ public class StringContainerRunner {
         //st.add("ala ma kota");
 
 
+
         for(int i = 0; i < st.size(); i++) {
             System.out.println(st.get(i));
         }

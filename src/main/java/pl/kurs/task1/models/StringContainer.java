@@ -29,12 +29,12 @@ public class StringContainer {
         this.duplicatedNotAllowed = duplicatedNotAllowed;
     }
 
-    public StringContainer getDataBetween(LocalDateTime from, LocalDateTime to) {
+    public StringContainer getDataBetween(LocalDateTime dateFrom, LocalDateTime dateTo) {
         StringContainer result = new StringContainer(pattern.pattern(), duplicatedNotAllowed);
         Node current = head;
         while (current != null) {
-            boolean afterFrom = (from == null || !current.addedAt.isBefore(from));
-            boolean beforeTo = (to == null || !current.addedAt.isAfter(to));
+            boolean afterFrom = (dateFrom == null || !current.addedAt.isBefore(dateFrom));
+            boolean beforeTo = (dateTo == null || !current.addedAt.isAfter(dateTo));
             if (afterFrom && beforeTo) {
                 result.add(current.value);
             }
