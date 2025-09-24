@@ -150,23 +150,19 @@ public class StringContainer {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("StringContainer{\n");
-        sb.append("pattern=").append(pattern.pattern()).append(",\n");
-        sb.append("duplicatedNotAllowed=").append(duplicatedNotAllowed).append(",\n");
-        sb.append("size=").append(size).append("\n");
-        sb.append("elements:\n");
+        String result = "StringContainer{\n" +
+                "pattern=" + pattern.pattern() + ",\n" +
+                "duplicatedNotAllowed=" + duplicatedNotAllowed + ",\n" +
+                "size=" + size + "\n" +
+                "elements:\n";
 
         Node current = head;
         while (current != null) {
-            sb.append(current.value)
-                    .append(" (").append(current.addedAt).append(")")
-                    .append("\n");
+            result += current.value + " (" + current.addedAt + ")\n";
             current = current.next;
         }
-
-        sb.append("}");
-        return sb.toString();
+        result += "}";
+        return result;
     }
 
     private void validateValue(String value) {
