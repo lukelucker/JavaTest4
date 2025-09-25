@@ -49,5 +49,6 @@ public class StringContainerRunner {
         st.storeToFile("postalCodes.txt");
         StringContainer fromFile = StringContainer.fromFile("postalCodes.txt");
         System.out.println(fromFile);
+
     }
 }

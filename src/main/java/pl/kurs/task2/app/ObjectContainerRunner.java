@@ -32,5 +32,9 @@ public class ObjectContainerRunner {
 
         ObjectContainer<Person> peopleFromWarsawFromFile = ObjectContainer.fromFile("warsawPeople.txt");
         System.out.println(peopleFromWarsawFromFile);
+
+        peopleFromWarsawFromFile.setCondition(p -> p.getCity().equals("Warsaw"));
+        peopleFromWarsawFromFile.add(new Person("Przemysław", "Warsaw", 46));
+
     }
 }

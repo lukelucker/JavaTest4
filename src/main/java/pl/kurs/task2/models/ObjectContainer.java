@@ -28,6 +28,10 @@ public class ObjectContainer<T extends Serializable> implements Serializable {
         this.condition = condition;
     }
 
+    public void setCondition(Predicate<T> condition) {
+        this.condition = condition;
+    }
+
     public void add(T obj) {
         if (!condition.test(obj)) {
             throw new ConditionNotMetException("Object does not satisfy container condition: " + obj);
@@ -113,6 +117,11 @@ public class ObjectContainer<T extends Serializable> implements Serializable {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        this.condition = p -> true;
     }
 
     @Override
