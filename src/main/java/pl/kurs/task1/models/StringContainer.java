@@ -9,7 +9,7 @@ import java.io.*;
 import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
-public class StringContainer {
+public class StringContainer implements Serializable {
 
     private final Pattern pattern;
     private Node head;
@@ -29,7 +29,7 @@ public class StringContainer {
         this.duplicatedNotAllowed = duplicatedNotAllowed;
     }
 
-    private static class Node {
+    private static class Node implements Serializable {
         String value;
         LocalDateTime addedAt;
         Node next;
@@ -105,46 +105,18 @@ public class StringContainer {
     }
 
     public void storeToFile(String fileName) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {
-            bw.write("PATTERN=" + pattern.pattern());
-            bw.newLine();
-            bw.write("DUPLICATES=" + duplicatedNotAllowed);
-            bw.newLine();
-
-            Node current = head;
-            while (current != null) {
-                bw.write(current.value + "|" + current.addedAt);
-                bw.newLine();
-                current = current.next;
-            }
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            oos.writeObject(this);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("File writing error", e);
         }
     }
 
     public static StringContainer fromFile(String fileName) {
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-            String patternLine = br.readLine();
-            String duplicatesLine = br.readLine();
-            if (patternLine == null || duplicatesLine == null) {
-                throw new RuntimeException("The file has incorrect format.");
-            }
-            String regex = patternLine.replace("PATTERN=", "");
-            boolean duplicatedNotAllowed = Boolean.parseBoolean(duplicatesLine.replace("DUPLICATES=", ""));
-            StringContainer result = new StringContainer(regex, duplicatedNotAllowed);
-
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split("\\|");
-                if (parts.length == 2) {
-                    String value = parts[0];
-                    LocalDateTime addedAt = LocalDateTime.parse(parts[1]);
-                    result.addWithDate(value, addedAt);
-                }
-            }
-            return result;
-        } catch (IOException e) {
-            throw new RuntimeException("File reading error.");
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
+            return (StringContainer) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException("File reading error", e);
         }
     }
 
@@ -211,12 +183,5 @@ public class StringContainer {
 
     public int size() {
         return size;
-    }
-
-    private void addWithDate(String value, LocalDateTime addedAt) {
-        validateValue(value);
-        Node newNode = new Node(value);
-        newNode.addedAt = addedAt;
-        addNode(newNode);
     }
 }
