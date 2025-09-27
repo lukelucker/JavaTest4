@@ -34,7 +34,6 @@ public class ObjectContainerRunner {
         System.out.println(peopleFromWarsawFromFile);
 
         peopleFromWarsawFromFile.setCondition(p -> p.getCity().equals("Warsaw"));
-        peopleFromWarsawFromFile.add(new Person("Przemysław", "Warsaw", 46));
 
     }
 }
