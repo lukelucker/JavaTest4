@@ -1,16 +1,15 @@
 package pl.kurs.task2.models;
 
 import pl.kurs.task2.exceptions.ConditionNotMetException;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class ObjectContainer<T extends Serializable> implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private Node<T> head;
     private transient Predicate<T> condition;
@@ -28,11 +27,10 @@ public class ObjectContainer<T extends Serializable> implements Serializable {
         this.condition = condition;
     }
 
-    public void setCondition(Predicate<T> condition) {
-        this.condition = condition;
-    }
-
     public void add(T obj) {
+        if (condition == null) {
+            throw new IllegalStateException("Container loaded from file has no active condition. " + "Please call setCondition(Predicate<T>) before adding new elements.");
+        }
         if (!condition.test(obj)) {
             throw new ConditionNotMetException("Object does not satisfy container condition: " + obj);
         }
@@ -119,9 +117,11 @@ public class ObjectContainer<T extends Serializable> implements Serializable {
         }
     }
 
-    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        ois.defaultReadObject();
-        this.condition = p -> true;
+    public void setCondition(Predicate<T> condition) {
+        if (condition == null) {
+            throw new IllegalArgumentException("Condition cannot be null");
+        }
+        this.condition = condition;
     }
 
     @Override

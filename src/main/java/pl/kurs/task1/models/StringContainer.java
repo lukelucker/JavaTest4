@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
 public class StringContainer implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private final Pattern pattern;
     private Node head;
